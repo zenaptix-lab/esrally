@@ -13,8 +13,8 @@ Create configmaps:
 oc create -f esrally-cm.yaml
 ```
 
-Create template and new-app:
-``
+Create template and create new-app:
+```
 oc create -f esrally.yaml
 oc new-app esrally
 ```
