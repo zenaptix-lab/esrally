@@ -1,0 +1,86 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rally-ini
+  labels:
+    app: esrally
+data:
+  rally.ini: |-
+    [meta]
+    config.version = 17
+    
+    [system]
+    env.name = local
+    
+    [node]
+    root.dir = //.rally/benchmarks
+    src.root.dir = //.rally/benchmarks/src
+    
+    [source]
+    remote.repo.url = https://github.com/elastic/elasticsearch.git
+    elasticsearch.src.subdir = elasticsearch
+    
+    [benchmarks]
+    local.dataset.cache = //.rally/benchmarks/data
+    
+    [reporting]
+    datastore.type = in-memory
+    datastore.host =
+    datastore.port =
+    datastore.secure =
+    datastore.user =
+    datastore.password =
+    
+    [tracks]
+    default.url = https://github.com/elastic/rally-tracks
+    
+    [teams]
+    default.url = https://github.com/elastic/rally-teams
+    
+    [defaults]
+    preserve_benchmark_candidate = False
+    
+    [distributions]
+    release.cache = true
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: logging-json
+  labels:
+    app: esrally
+data:
+  logging.json: |-
+    {
+      "version": 1,
+      "formatters": {
+        "normal": {
+          "format": "%(asctime)s,%(msecs)d %(actorAddress)s/PID:%(process)d %(name)s %(levelname)s %(message)s",
+          "datefmt": "%Y-%m-%d %H:%M:%S",
+          "()": "esrally.log.configure_utc_formatter"
+        }
+      },
+      "filters": {
+        "isActorLog": {
+          "()": "thespian.director.ActorAddressLogFilter"
+        }
+      },
+      "handlers": {
+        "console_log_handler": {
+            "class": "logging.StreamHandler",
+            "formatter": "normal",
+            "filters": ["isActorLog"]
+        }
+      },
+      "root": {
+        "handlers": ["console_log_handler"],
+        "level": "INFO"
+      },
+      "loggers": {
+        "elasticsearch": {
+          "handlers": ["console_log_handler"],
+          "level": "WARNING",
+          "propagate": false
+        }
+      }
+    }

@@ -1,0 +1,135 @@
+kind: Template
+apiVersion: v1
+labels:
+  version: latest
+  group: benchmark
+metadata:
+  annotations:
+    description: Run esrally
+    tags: elasticsearch,esrally,benchmark
+    version: latest
+  name: esrally
+objects:
+
+- kind: Job
+  apiVersion: batch/v1 # for versions before 1.8.0 use apps/v1beta1
+  metadata:
+    name: '${NAME}-${TRACK}-${TARGET_HOSTS}-${PIPELINE}'
+    labels:
+      app: esrally
+  spec:
+    template:
+      metadata:
+        labels:
+          app: esrally
+      spec:
+        containers:
+        - image: '${IMAGE}'
+          tty: true
+          name: esrally
+          command:
+          - sh
+          - '-c'
+          - >-
+            python
+            -u
+            /usr/local/bin/esrally
+            race
+            --track=${TRACK}
+            --target-hosts=${TARGET_HOSTS}:${TARGET_PORT}
+            --pipeline=${PIPELINE}
+          resources:
+            requests:
+              cpu: '${CPU_REQ}'
+              memory: '${MEM_REQ}'
+            limits:
+              cpu: '${CPU_LIMIT}'
+              memory: '${MEM_LIMIT}'
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: TRACK
+              value: ${TRACK}
+            - name: TARGET_HOSTS
+              value: ${TARGET_HOSTS}
+            - name: TARGET_PORT
+              value: ${TARGET_PORT}
+            - name: PIPELINE
+              value: ${PIPELINE}
+          volumeMounts:
+            - mountPath: "/.rally"
+              name: rally
+            - mountPath: "/.rally/rally.ini"
+              name: rally-ini
+              subPath: "rally.ini"
+            - mountPath: "/.rally/logging.json"
+              name: logging-json
+              subPath: "logging.json"
+        restartPolicy: Never
+        volumes:
+        - name: rally
+          emptyDir: {}
+        - name: rally-ini
+          configMap:
+            name: rally-ini
+        - name: logging-json
+          configMap:
+            name: logging-json
+
+parameters:
+  - name: IMAGE
+    displayName: Image
+    required: true
+    description: 'esrally docker image'
+    value: 'quay.io/zenlab/esrally:latest'
+  - name: TARGET_HOSTS
+    displayName: --target--hosts
+    required: true
+    description: 'address of the Elasticsearch cluster(s)'
+    value: 'elasticsearch'
+  - name: TARGET_PORT
+    displayName: target port (default 9200)
+    required: true
+    description: 'port of the Elasticsearch cluster'
+    value: '9200'
+  - name: TRACK
+    displayName: --track
+    required: true
+    description: 'define the track to use'
+    value: 'percolator'
+  - name: PIPELINE
+    displayName: --pipeline
+    required: true
+    description: 'select the pipeline to run'
+    value: 'benchmark-only'
+  - name: NAME
+    displayName: Job name
+    required: true
+    description: Job name
+    value: 'esrally'
+  - name: CPU_REQ
+    displayName: CPU Requested
+    required: false
+    description: 'CPU Requested'
+    value: '100m'
+  - name: CPU_LIMIT
+    displayName: CPU Limit
+    required: false
+    description: 'CPU limit'
+    value: "8000m"
+  - name: MEM_REQ
+    displayName: Memory Requested
+    required: false
+    description: 'CPU Requested'
+    value: '4G'
+  - name: MEM_LIMIT
+    displayName: Memory Limit
+    required: false
+    description: 'Memory limit'
+    value: '4G'
