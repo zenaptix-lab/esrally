@@ -4,7 +4,7 @@ Benchmark Elasticsearch cluster(s) on OKD (OpenShift).
 
 # Run as docker
 ```
-docker run -ti zenlab/esrally
+docker run -ti quay.io/zenlab/esrally
 ```
 
 # More info
