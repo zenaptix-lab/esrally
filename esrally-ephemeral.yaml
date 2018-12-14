@@ -78,27 +78,13 @@ objects:
         restartPolicy: Never
         volumes:
         - name: rally
-          persistenVolumeClaim:
-            claimName: rally-pvc
+          emptyDir: {}
         - name: rally-ini
           configMap:
             name: rally-ini
         - name: logging-json
           configMap:
             name: logging-json
-
-- kind: PersistentVolumeClaim
-  apiVersion: v1
-  metadata:
-    name: rally-pvc
-    labels:
-      app: esrally
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 50Gi
 
 parameters:
   - name: IMAGE

@@ -2,11 +2,7 @@
 
 Benchmark Elasticsearch clusters on OKD.
 
-## Logging
-
-Logging configured to log everything to STDOUT.
-
-# Running as docker
+## Run as Docker
 
 A config file (really.ini) is required to run esrally and an example configuration file is available in ./exmaples
 
@@ -17,17 +13,17 @@ cd esrally
 mkdir .rally
 ```
 
-Configure esrally
+Configure esrally:
 ```
 docker run -ti -v ${PWD}/.rally:/root/.rally quay.io/zenlab/esrally configure
 ```
 
-Run as docker
+Run as docker:
 ```
 docker run -ti -v ${PWD}/.rally:/root/.rally race --track=percolator --target-host=<elasticsearch>:9200 --pipeline=benchmark-only
 ```
 
-# Runs as OKD/k8s job
+## Run as OKD job
 
 Create configmaps:
 ```
@@ -40,17 +36,29 @@ oc create -f esrally.yaml
 oc new-app esrally
 ```
 
-# Specify different track in OKD/k8s
+Specify different track:
 ```
 oc new-app esrally -p TRACK=pmc
 ```
 
-# Destroy
+Destroy:
 ```
 oc process esrally | oc delete -f -
 oc delete -f esrally-cm
 ```
 
+## Image registry
+
+[https://quay.io/repository/zenlab/esrally](https://quay.io/repository/zenlab/esrally)
+
+## Logging
+
+Logging configured to log everything to STDOUT.
+
+## Persistent storage
+
+Rally template (esrally.yaml) is configured to use persistent storage from the default OKD storageClass. Alternatively use rally-ephemeral.yaml for ephemeral storage.
+
 # More info
 
-See [https://github.com/elastic/rally](https://github.com/elastic/rally) or [https://esrally.readthedocs.io](https://esrally.readthedocs.io) more details regarding Rally and Elasticsearch benchmarks.
+See [https://github.com/elastic/rally](https://github.com/elastic/rally) or [https://esrally.readthedocs.io](https://esrally.readthedocs.io) for more details regarding Rally and Elasticsearch benchmarks.
