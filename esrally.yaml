@@ -78,7 +78,7 @@ objects:
         restartPolicy: Never
         volumes:
         - name: rally
-          persistenVolumeClaim:
+          persistentVolumeClaim:
             claimName: rally-pvc
         - name: rally-ini
           configMap:
@@ -99,6 +99,7 @@ objects:
     resources:
       requests:
         storage: 50Gi
+    storageClassName: glusterfs-storage
 
 parameters:
   - name: IMAGE
