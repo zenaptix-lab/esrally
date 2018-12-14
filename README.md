@@ -1,13 +1,34 @@
 # esrally on OKD
 
-Benchmark Elasticsearch cluster(s) on OKD (OpenShift).
+Benchmark Elasticsearch clusters on OKD.
 
-# Run as docker
+## Logging
+
+Logging configured to log everything to STDOUT.
+
+# Running as docker
+
+A config file (really.ini) is required to run esrally and an example configuration file is available in ./exmaples
+
+Clone and prep:
 ```
-docker run -ti quay.io/zenlab/esrally
+git clone https://github.com/zenaptix-lab/esrally.git
+cd esrally
+mkdir .rally
+```
+
+Configure esrally
+```
+docker run -ti -v ${PWD}/.rally:/root/.rally quay.io/zenlab/esrally configure
+```
+
+Run as docker
+```
+docker run -ti -v ${PWD}/.rally:/root/.rally race --track=percolator --target-host=<elasticsearch>:9200 --pipeline=benchmark-only
 ```
 
 # Runs as OKD/k8s job
+
 Create configmaps:
 ```
 oc create -f esrally-cm.yaml
@@ -27,6 +48,7 @@ oc new-app esrally -p TRACK=pmc
 # Destroy
 ```
 oc process esrally | oc delete -f -
+oc delete -f esrally-cm
 ```
 
 # More info

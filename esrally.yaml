@@ -71,6 +71,7 @@ objects:
             - mountPath: "/.rally/logging.json"
               name: logging-json
               subPath: "logging.json"
+          imagePullPolicy: Always
         restartPolicy: Never
         volumes:
         - name: rally

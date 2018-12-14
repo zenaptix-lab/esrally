@@ -22,7 +22,7 @@ data:
     
     [benchmarks]
     local.dataset.cache = //.rally/benchmarks/data
-    
+
     [reporting]
     datastore.type = in-memory
     datastore.host =
@@ -38,7 +38,7 @@ data:
     default.url = https://github.com/elastic/rally-teams
     
     [defaults]
-    preserve_benchmark_candidate = False
+    preserve_benchmark_candidate = True
     
     [distributions]
     release.cache = true

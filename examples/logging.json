@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "formatters": {
+    "normal": {
+      "format": "%(asctime)s,%(msecs)d %(actorAddress)s/PID:%(process)d %(name)s %(levelname)s %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S",
+      "()": "esrally.log.configure_utc_formatter"
+    }
+  },
+  "filters": {
+    "isActorLog": {
+      "()": "thespian.director.ActorAddressLogFilter"
+    }
+  },
+  "handlers": {
+    "console_log_handler": {
+        "class": "logging.StreamHandler",
+        "formatter": "normal",
+        "filters": ["isActorLog"]
+    }
+  },
+  "root": {
+    "handlers": ["console_log_handler"],
+    "level": "INFO"
+  },
+  "loggers": {
+    "elasticsearch": {
+      "handlers": ["console_log_handler"],
+      "level": "WARNING",
+      "propagate": false
+    }
+  }
+}
